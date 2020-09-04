@@ -1,11 +1,22 @@
-FROM 744117028012.dkr.ecr.us-west-2.amazonaws.com/csgo-base
-COPY ./files/ /
+# https://hub.docker.com/r/cm2network/csgo/
+FROM cm2network/csgo
+WORKDIR /root
+# COPY ./scripts/ /
 RUN echo starting build \
-    && trap no_ctrlc INT \
-    && trap term_handler TERM \
-    && ctrlc_count=0 \
-    && chmod +x /*.sh \
-    && . ./lib.sh --source-only \
-    && update
-VOLUME ["/var/csgo/cfg"]
-CMD ["/supervisor.sh"]
+  && bash "${STEAMCMDDIR}/steamcmd.sh" +login anonymous \
+    +force_install_dir "${STEAMAPPDIR}" \
+    +app_update "${STEAMAPPID}" \
+    +quit
+
+USER ${USER}
+
+VOLUME ${STEAMAPPDIR}
+
+WORKDIR ${HOMEDIR}
+
+CMD ["bash", "entry.sh"]
+
+# Expose ports
+EXPOSE 27015/tcp \
+	27015/udp \
+	27020/udp
