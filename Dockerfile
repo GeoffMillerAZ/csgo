@@ -6,6 +6,6 @@ RUN echo starting build \
     && ctrlc_count=0 \
     && chmod +x /*.sh \
     && . ./lib.sh --source-only \
-    && [ ! -d "/opt/steam/counterstrike" ] && install || update
+    && update
 VOLUME ["/var/csgo/cfg"]
 CMD ["/supervisor.sh"]
